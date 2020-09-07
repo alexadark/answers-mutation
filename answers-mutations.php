@@ -18,26 +18,26 @@ if (!defined('ABSPATH')) {
 
 
 add_action('graphql_register_types', function () {
-    register_graphql_mutation('voteMutation', [
+    register_graphql_mutation('resultMutation', [
         'inputFields' => [
             'emailInput' => [
                 'type' => 'String',
-                'description' => __('Email Field', 'twentynineteen')
+                'description' =>'email field'
             ],
-            'messageInput' => [
+            'firstNameInput' => [
                 'type' => 'String',
-                'description' => __('Message Field', 'twentynineteen')
+                'description' => 'First Name Field'
             ],
-            'votesInput' => [
+            'resultsInput' => [
                 'type' => ['list_of' => 'ID'],
-                'description' => __('List of Votes Titles', 'twentynineteen')
+                'description' => 'Detected Dragons'
             ]
 
         ],
         'outputFields' => [
-            'voteSubmitted' => [
+            'resultSubmitted' => [
                 'type' => 'Boolean',
-                'description' => __('Vote successfull or not', 'twentynineteen'),
+                'description' =>'Result submission successfull or not',
             ]
         ],
         'mutateAndGetPayload' => function ($input, $context, $info) {
@@ -49,16 +49,16 @@ add_action('graphql_register_types', function () {
             }
             $existing_vote = get_page_by_title($input['emailInput'], 'OBJECT', 'votes');
             if ($existing_vote) {
-                throw new \GraphQL\Error\UserError('You have already submitted a vote from this email');
+                throw new \GraphQL\Error\UserError('You have already submitted a dragons questionnaire from this email');
             }
             $post_id = wp_insert_post([
-                'post_type' => 'votes',
+                'post_type' => 'answers',
                 'post_title' => sanitize_text_field($input['emailInput']),
-                'post_content' => sanitize_text_field($input['messageInput']),
+                'post_content' => sanitize_text_field($input['firstNameInput']),
                 'post_status' => 'publish'
 
             ]);
-            update_field('stories_votes', $input['votesInput'], $post_id);
+            update_field('results_dragons', $input['resultsInput'], $post_id);
             return  [
                 "voteSubmitted" => true
             ];
