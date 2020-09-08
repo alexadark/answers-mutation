@@ -28,6 +28,11 @@ add_action('graphql_register_types', function () {
                 'type' => 'String',
                 'description' => 'First Name Field'
             ],
+            'answersInput' => [
+                'type' => 'String',
+                'description' => 'Answers to the quizz'
+            ],
+
             'resultsInput' => [
                 'type' => ['list_of' => 'ID'],
                 'description' => 'Detected Dragons'
@@ -47,7 +52,7 @@ add_action('graphql_register_types', function () {
             if (!is_email($input['emailInput'])) {
                 throw new \GraphQL\Error\UserError('The email is invalid');
             }
-            $existing_vote = get_page_by_title($input['emailInput'], 'OBJECT', 'votes');
+            $existing_vote = get_page_by_title($input['emailInput'], 'OBJECT', 'answers');
             if ($existing_vote) {
                 throw new \GraphQL\Error\UserError('You have already submitted a dragons questionnaire from this email');
             }
